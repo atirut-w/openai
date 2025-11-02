@@ -6,3 +6,4 @@ add_library(openai
 )
 target_include_directories(openai PUBLIC include)
 target_link_libraries(openai PRIVATE curl nlohmann_json::nlohmann_json)
+target_compile_features(openai PUBLIC cxx_std_23)
