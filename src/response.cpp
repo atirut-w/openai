@@ -18,6 +18,7 @@ void from_json(const nlohmann::json &j, Response &resp) {
     throw Error(std::format("{}: {}", j["error"]["code"].get<std::string>(),
                             j["error"]["message"].get<std::string>()));
   }
+  resp.output = j["output"];
 }
 
 } // namespace openai
