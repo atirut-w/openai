@@ -1,13 +1,16 @@
 #pragma once
 #include <curl/curl.h>
+#include <optional>
+#include <string>
 
 namespace openai {
 
 class OpenAI {
-  CURL *curl;
+  CURL *curl = nullptr;
+  curl_slist *headers = nullptr;
 
 public:
-  OpenAI();
+  OpenAI(std::optional<std::string> api_key = std::nullopt);
   ~OpenAI();
 
   // TODO: Implement copy and move
