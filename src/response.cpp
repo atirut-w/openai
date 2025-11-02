@@ -6,7 +6,7 @@ namespace openai {
 
 void to_json(nlohmann::json &j, const ResponseRequest &req) {
   if (req.input) {
-    j["input"] = *req.input;
+    std::visit([&j](auto &&arg) { j["input"] = arg; }, *req.input);
   }
   if (req.model) {
     j["model"] = *req.model;
