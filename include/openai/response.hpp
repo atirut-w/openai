@@ -7,12 +7,40 @@
 
 namespace openai {
 
-struct ResponseRequest {
-  std::optional<std::variant<std::string, std::vector<nlohmann::json>>> input;
+struct InputTextContent {
+	std::string text;
+};
+
+struct InputImageContent {
+	std::string image_url;
+	std::string file_id;
+	std::string detail;
+};
+
+struct InputFileContent {
+	std::string file_id;
+	std::string detail;
+};
+
+using InputContent = std::variant<InputTextContent, InputImageContent, InputFileContent>;
+
+using InputMessageContentList = std::vector<InputContent>;
+
+struct EasyInputMessage {
+	std::string role;
+	std::variant<std::string, InputMessageContentList> content;
+};
+
+using InputItem = std::variant<EasyInputMessage>;
+
+using InputParam = std::variant<std::string, std::vector<InputItem>>;
+
+struct CreateResponse {
+  InputParam input;
   std::optional<std::string> model;
 };
 
-void to_json(nlohmann::json &j, const ResponseRequest &req);
+void to_json(nlohmann::json &j, const CreateResponse &req);
 
 struct FileCitation {
 	std::string file_id;
@@ -22,16 +50,16 @@ struct FileCitation {
 
 struct UrlCitation {
 	std::string url;
-	int start;
-	int end;
+	int start_index;
+	int end_index;
 	std::string title;
 };
 
 struct ContainerFileCitation {
 	std::string container_id;
 	std::string file_id;
-	int start;
-	int end;
+	int start_index;
+	int end_index;
 	std::string filename;
 };
 

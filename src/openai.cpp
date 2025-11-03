@@ -68,7 +68,7 @@ OpenAI::~OpenAI() {
   curl_easy_cleanup(curl);
 }
 
-Response OpenAI::create_response(const ResponseRequest &req) {
+Response OpenAI::create_response(const CreateResponse &req) {
   return nlohmann::json::parse(http_post("https://api.openai.com/v1/responses",
                                          nlohmann::json(req).dump()))
       .get<Response>();

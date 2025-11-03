@@ -23,7 +23,7 @@ public:
   OpenAI(OpenAI &&other) = delete;
   OpenAI &operator=(OpenAI &&other) = delete;
 
-  Response create_response(const ResponseRequest &req);
+  Response create_response(const CreateResponse &req);
 };
 
 } // namespace openai
