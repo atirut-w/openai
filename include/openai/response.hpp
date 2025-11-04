@@ -12,14 +12,16 @@ struct InputTextContent {
 };
 
 struct InputImageContent {
-	std::string image_url;
-	std::string file_id;
-	std::string detail;
+	std::optional<std::string> image_url;
+	std::optional<std::string> file_id;
+	std::string detail = "auto"; // low, high, or auto
 };
 
 struct InputFileContent {
-	std::string file_id;
-	std::string detail;
+	std::optional<std::string> file_id;
+	std::optional<std::string> filename;
+	std::optional<std::string> file_url;
+	std::optional<std::string> file_data;
 };
 
 using InputContent = std::variant<InputTextContent, InputImageContent, InputFileContent>;
@@ -27,7 +29,7 @@ using InputContent = std::variant<InputTextContent, InputImageContent, InputFile
 using InputMessageContentList = std::vector<InputContent>;
 
 struct EasyInputMessage {
-	std::string role;
+	std::string role; // user, assistant, system, or developer
 	std::variant<std::string, InputMessageContentList> content;
 };
 
@@ -84,8 +86,32 @@ using OutputMessageContent = std::variant<OutputTextContent, RefusalContent>;
 
 struct OutputMessage {
   std::string id;
+	std::string role;
   std::vector<OutputMessageContent> content;
-  std::string status;
+  std::string status; // in_progress, completed, or incomplete
+
+	operator EasyInputMessage() const {
+		EasyInputMessage msg;
+			msg.role = "assistant";
+		InputMessageContentList content_list;
+
+		for (const auto &item : content) {
+			if (std::holds_alternative<OutputTextContent>(item)) {
+				const auto &text_content = std::get<OutputTextContent>(item);
+				InputTextContent input_text;
+				input_text.text = text_content.text;
+				content_list.push_back(input_text);
+			} else if (std::holds_alternative<RefusalContent>(item)) {
+				const auto &refusal_content = std::get<RefusalContent>(item);
+				InputTextContent input_text;
+				input_text.text = std::string("Refusal: ") + refusal_content.refusal;
+				content_list.push_back(input_text);
+			}
+		}
+
+		msg.content = content_list;
+		return msg;
+	}
 };
 
 using OutputItem = std::variant<OutputMessage>;

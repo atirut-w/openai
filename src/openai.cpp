@@ -69,8 +69,9 @@ OpenAI::~OpenAI() {
 }
 
 Response OpenAI::create_response(const CreateResponse &req) {
-  return nlohmann::json::parse(http_post("https://api.openai.com/v1/responses",
-                                         nlohmann::json(req).dump()))
+  std::string body = nlohmann::json(req).dump();
+  return nlohmann::json::parse(
+             http_post("https://api.openai.com/v1/responses", body))
       .get<Response>();
 }
 
